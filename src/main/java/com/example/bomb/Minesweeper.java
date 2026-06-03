@@ -10,13 +10,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Minesweeper extends Application {
 
     // Настройки игры
     private static final int CELL_SIZE = 30;
-    private static final int GRID_WIDTH = 20;  // Ширина в клетках
-    private static final int GRID_HEIGHT = 16; // Высота в клетках
-    private static final int BOMB_COUNT = 40;  // Количество бомб
+    private static final int GRID_WIDTH = 8;  // Ширина в клетках
+    private static final int GRID_HEIGHT = 8; // Высота в клетках
+    private static final int BOMB_COUNT = 10;  // Количество бомб
 
     // Состояния клеток
     private static final int EMPTY = 0;
@@ -113,20 +117,24 @@ public class Minesweeper extends Application {
 
     private void placeBombs(int safeX, int safeY) {
         int bombsPlaced = 0;
+        List<Point> bombsPlacement = new ArrayList<>();
 
+        for (int width = 0; width < GRID_WIDTH; width++) {
+            for (int height = 0; height < GRID_HEIGHT; height++) {
+                if (Math.abs(width - safeX) <= 1 && Math.abs(height - safeY) <= 1) {
+                    continue;
+                }
+                bombsPlacement.add(new Point(width, height));
+            }
+        }
         while (bombsPlaced < BOMB_COUNT) {
-            int x = (int) (Math.random() * GRID_WIDTH);
-            int y = (int) (Math.random() * GRID_HEIGHT);
+            int Index = (int) (Math.random() * bombsPlacement.size());
 
-            // Не ставим бомбу в безопасную зону (3x3 вокруг первого клика)
-            if (Math.abs(x - safeX) <= 1 && Math.abs(y - safeY) <= 1) {
-                continue;
-            }
+            int x = (int) bombsPlacement.get(Index).getX();
+            int y = (int) bombsPlacement.get(Index).getY();
 
-            if (grid[y][x] != BOMB) {
-                grid[y][x] = BOMB;
-                bombsPlaced++;
-            }
+            grid[y][x] = BOMB;
+            bombsPlaced++;
         }
     }
 
